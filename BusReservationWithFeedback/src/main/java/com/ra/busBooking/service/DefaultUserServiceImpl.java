@@ -49,31 +49,30 @@ import com.ra.busBooking.repository.UserRepository;
 @Service
 public class DefaultUserServiceImpl implements DefaultUserService{
    @Autowired
-	private UserRepository userRepo;
+   private UserRepository userRepo;
    
    @Autowired
-	private BookingsRepository bookingRepository;
-	
-   @Autowired
-  	private RoleRepository roleRepo;
-  	
-   @Autowired
+   private BookingsRepository bookingRepository;
+
+	@Autowired
+	private RoleRepository roleRepo;
+
+	@Autowired
    private TemplateEngine templateEngine;
-   
+
 	private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-	
-	
-	
+
+
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-	
+
 		User user = userRepo.findByEmail(email);
 		if(user == null) {
 			throw new UsernameNotFoundException("Invalid username or password.");
 		}
-		return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), mapRolesToAuthorities(user.getRole()));		
+		return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), mapRolesToAuthorities(user.getRole()));
 	}
-	
+
 	private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Set<Role> roles){
 		return roles.stream().map(role -> new SimpleGrantedAuthority(role.getRole())).collect(Collectors.toList());
 	}
@@ -82,15 +81,15 @@ public class DefaultUserServiceImpl implements DefaultUserService{
 	public User save(UserRegisteredDTO userRegisteredDTO) {
 		Role role = new Role();
 		if(userRegisteredDTO.getRole().equals("USER"))
-		  role = roleRepo.findByRole("USER");
+			role = roleRepo.findByRole("USER");
 		else if(userRegisteredDTO.getRole().equals("ADMIN"))
-		 role = roleRepo.findByRole("ADMIN");
+			role = roleRepo.findByRole("ADMIN");
 		User user = new User();
 		user.setEmail(userRegisteredDTO.getEmail_id());
 		user.setName(userRegisteredDTO.getName());
 		user.setPassword(passwordEncoder.encode(userRegisteredDTO.getPassword()));
 		user.setRole(role);
-		
+
 		return userRepo.save(user);
 	}
 
@@ -114,85 +113,85 @@ public class DefaultUserServiceImpl implements DefaultUserService{
 	}
 
 	private String generatePDFAndSendMail(BookingsDTO bookingDTO, User users) {
-		
-			int random = (int) (Math.random() * 90) + 10;
-			String nameGenrator = users.getName()+"_ticket_"+random+".pdf";
-			try {
-				createPdf(bookingDTO,users ,nameGenrator);
-				sendEmail(bookingDTO,users ,nameGenrator);
+
+		int random = (int) (Math.random() * 90) + 10;
+		String nameGenrator = users.getName()+"_ticket_"+random+".pdf";
+		try {
+			createPdf(bookingDTO,users ,nameGenrator);
+			sendEmail(bookingDTO,users ,nameGenrator);
             return nameGenrator;
-			} catch (DocumentException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return "";
-				}
+		} catch (DocumentException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "";
+	}
+
 	@Override
 	public void sendEmail(BookingsDTO bookingDTO, User users, String nameGenrator) {
 		try {
 			final String username = "";//email id of sender
-		    final String password = "";//application password of Gmail , I dont know how to generate watch this https://bit.ly/3PY4IeS
+			final String password = "";//application password of Gmail , I dont know how to generate watch this https://bit.ly/3PY4IeS
 
-		    Properties props = new Properties();
-		    props.put("mail.smtp.auth", true);
-		    props.put("mail.smtp.starttls.enable", true);
-		    props.put("mail.smtp.host", "smtp.gmail.com");
-		    props.put("mail.smtp.port", "587");
+			Properties props = new Properties();
+			props.put("mail.smtp.auth", true);
+			props.put("mail.smtp.starttls.enable", true);
+			props.put("mail.smtp.host", "smtp.gmail.com");
+			props.put("mail.smtp.port", "587");
 
-		    Session session = Session.getInstance(props,
-		            new javax.mail.Authenticator() {
-		                protected PasswordAuthentication getPasswordAuthentication() {
-		                    return new PasswordAuthentication(username, password);
-		                }
-		            });
-		         // Create a default MimeMessage object.
-		         Message message = new MimeMessage(session);
+			Session session = Session.getInstance(props,
+					new javax.mail.Authenticator() {
+						protected PasswordAuthentication getPasswordAuthentication() {
+							return new PasswordAuthentication(username, password);
+						}
+					});
+			// Create a default MimeMessage object.
+			Message message = new MimeMessage(session);
 
-		         // Set From: header field of the header.
-		         message.setFrom(new InternetAddress(username));
+			// Set From: header field of the header.
+			message.setFrom(new InternetAddress(username));
 
-		         // Set To: header field of the header.
-		         message.setRecipients(Message.RecipientType.TO,
-		            InternetAddress.parse(users.getEmail()));
+			// Set To: header field of the header.
+			message.setRecipients(Message.RecipientType.TO,
+					InternetAddress.parse(users.getEmail()));
 
-		         // Set Subject: header field
-		         message.setSubject("Testing Subject");
+			// Set Subject: header field
+			message.setSubject("Testing Subject");
 
-		         // Create the message part
-		         BodyPart messageBodyPart = new MimeBodyPart();
+			// Create the message part
+			BodyPart messageBodyPart = new MimeBodyPart();
 
-		         // Now set the actual message
-		         messageBodyPart.setText("This is message body");
+			// Now set the actual message
+			messageBodyPart.setText("This is message body");
 
-		         // Create a multipar message
-		         Multipart multipart = new MimeMultipart();
+			// Create a multipar message
+			Multipart multipart = new MimeMultipart();
 
-		         // Set text message part
-		         multipart.addBodyPart(messageBodyPart);
+			// Set text message part
+			multipart.addBodyPart(messageBodyPart);
 
-		         // Part two is attachment
-		         messageBodyPart = new MimeBodyPart();
-		         String filename = ""+nameGenrator+"";//directory in which pdf is created
-		         DataSource source = new FileDataSource(filename);
-		         messageBodyPart.setDataHandler(new DataHandler(source));
-		         messageBodyPart.setFileName(filename);
-		         multipart.addBodyPart(messageBodyPart);
+			// Part two is attachment
+			messageBodyPart = new MimeBodyPart();
+			String filename = ""+nameGenrator+"";//directory in which pdf is created
+			DataSource source = new FileDataSource(filename);
+			messageBodyPart.setDataHandler(new DataHandler(source));
+			messageBodyPart.setFileName(filename);
+			multipart.addBodyPart(messageBodyPart);
 
-		         // Send the complete message parts
-		         message.setContent(multipart);
-		         
-		         Transport.send(message);
+			// Send the complete message parts
+			message.setContent(multipart);
 
-		         System.out.println("Sent message successfully....");
-		         
+			Transport.send(message);
+
+			System.out.println("Sent message successfully....");
+
 
 		} catch (MessagingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		
-		
+
 	}
 
 	public void createPdf(BookingsDTO booking,User users,String nameGenrator) throws DocumentException, IOException {
@@ -203,11 +202,11 @@ public class DefaultUserServiceImpl implements DefaultUserService{
 		context.setVariable("From", booking.getFromDestination());
 		context.setVariable("to", booking.getToDestination());
 		context.setVariable("busName", booking.getBusName());
-	
+
 		String processHTML = templateEngine.process("template", context);
-		
+		String path = "/Users/Git/BusReservation/BusReservationWithFeedback/src/main/resources/tickets";
 		try {
-			OutputStream out = new FileOutputStream(""+nameGenrator+"");//directory in which you have to generate pdf of Ticket
+			OutputStream out = new FileOutputStream(path + nameGenrator + "");//directory in which you have to generate pdf of Ticket
 			ITextRenderer ir = new ITextRenderer();
 			ir.setDocumentFromString(processHTML);
 			ir.layout();
