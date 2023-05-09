@@ -131,7 +131,7 @@ public class DefaultUserServiceImpl implements DefaultUserService{
 	public void sendEmail(BookingsDTO bookingDTO, User users, String nameGenrator) {
 		try {
 			final String username = "";//email id of sender
-		    final String password = "";//application password of Gmail , I dont know how to generate watch this https://bit.ly/3PY4IeS
+		    final String password = "jprbcwjibdketrmj";//application password of Gmail , I dont know how to generate watch this https://bit.ly/3PY4IeS
 
 		    Properties props = new Properties();
 		    props.put("mail.smtp.auth", true);
@@ -172,7 +172,9 @@ public class DefaultUserServiceImpl implements DefaultUserService{
 
 		         // Part two is attachment
 		         messageBodyPart = new MimeBodyPart();
-		         String filename = ""+nameGenrator+"";//directory in which pdf is created
+
+	            String path = "/Users/Git/BusReservation/BusReservationWithFeedback/src/main/resources/tickets";
+	            String filename = path + nameGenrator + "";//directory in which pdf is created
 		         DataSource source = new FileDataSource(filename);
 		         messageBodyPart.setDataHandler(new DataHandler(source));
 		         messageBodyPart.setFileName(filename);
@@ -205,9 +207,9 @@ public class DefaultUserServiceImpl implements DefaultUserService{
 		context.setVariable("busName", booking.getBusName());
 	
 		String processHTML = templateEngine.process("template", context);
-		
+        String path = "/Users/Git/BusReservation/BusReservationWithFeedback/src/main/resources/tickets";		
 		try {
-			OutputStream out = new FileOutputStream(""+nameGenrator+"");//directory in which you have to generate pdf of Ticket
+			OutputStream out = new FileOutputStream(path + nameGenrator + "");//directory in which you have to generate pdf of Ticket
 			ITextRenderer ir = new ITextRenderer();
 			ir.setDocumentFromString(processHTML);
 			ir.layout();
