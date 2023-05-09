@@ -20,36 +20,36 @@ import com.ra.busBooking.repository.UserRepository;
 @Controller
 @RequestMapping("/adminScreen")
 public class AdminController {
-	
-	@Autowired
-	UserRepository userRepository;
-	
-	@Autowired 
-	BusDataRepository busDataRepository;
-	
-	
-	@ModelAttribute("busDetails")
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    BusDataRepository busDataRepository;
+
+
+    @ModelAttribute("busDetails")
     public BusData busData() {
         return new BusData();
     }
-	
-	@GetMapping
-    public String displayDashboard(Model model){
-		String user= returnUsername();
+
+    @GetMapping
+    public String displayDashboard(Model model) {
+        String user = returnUsername();
         model.addAttribute("userDetails", user);
         return "adminScreen";
     }
 
-	private String returnUsername() {
-		SecurityContext securityContext = SecurityContextHolder.getContext();
+    private String returnUsername() {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
         UserDetails user = (UserDetails) securityContext.getAuthentication().getPrincipal();
-		User users = userRepository.findByEmail(user.getUsername());
-		return users.getName();
-	}
-	
-	@PostMapping
-    public String saveBusData(@ModelAttribute("busDetails") BusData busData,Model model){
-		String user= returnUsername();
+        User users = userRepository.findByEmail(user.getUsername());
+        return users.getName();
+    }
+
+    @PostMapping
+    public String saveBusData(@ModelAttribute("busDetails") BusData busData, Model model) {
+        String user = returnUsername();
         model.addAttribute("userDetails", user);
         busDataRepository.save(busData);
         model.addAttribute("busDetails", new BusData());

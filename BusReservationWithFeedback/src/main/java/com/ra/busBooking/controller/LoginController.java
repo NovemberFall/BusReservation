@@ -18,22 +18,22 @@ import com.ra.busBooking.service.DefaultUserService;
 @Controller
 @RequestMapping("/login")
 public class LoginController {
-@Autowired
-	private DefaultUserService userService;
+    @Autowired
+    private DefaultUserService userService;
 
     @ModelAttribute("user")
     public UserLoginDTO userLoginDTO() {
         return new UserLoginDTO();
     }
-    
-	@GetMapping
-	public String login() {
-		return "login";
-	}
-	
-	@PostMapping
-	public void  loginUser(@ModelAttribute("user") 
-	UserLoginDTO userLoginDTO) {
-	 userService.loadUserByUsername(userLoginDTO.getUsername());
-	}
+
+    @GetMapping
+    public String login() {
+        return "login";
+    }
+
+    @PostMapping
+    public void loginUser(@ModelAttribute("user")
+                          UserLoginDTO userLoginDTO) {
+        userService.loadUserByUsername(userLoginDTO.getUsername());
+    }
 }

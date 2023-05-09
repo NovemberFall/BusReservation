@@ -31,76 +31,77 @@ import com.ra.busBooking.service.DefaultUserService;
 @Controller
 @RequestMapping("/dashboard")
 public class DashboardController {
-	
-	 private DefaultUserService userService;
 
-	    public DashboardController(DefaultUserService userService) {
-	        super();
-	        this.userService = userService;
-	    }
-	
-	@Autowired
-	BookingsRepository bookingsRepository;
-	
-	@Autowired
-	UserRepository userRepository;
-	
-	@Autowired
-	BusDataRepository busDataRepository;
+    private DefaultUserService userService;
 
-	@ModelAttribute("reservation")
+    public DashboardController(DefaultUserService userService) {
+        super();
+        this.userService = userService;
+    }
+
+    @Autowired
+    BookingsRepository bookingsRepository;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    BusDataRepository busDataRepository;
+
+    @ModelAttribute("reservation")
     public ReservationDTO reservationDTO() {
         return new ReservationDTO();
     }
-	
-	@GetMapping
-    public String displayDashboard(Model model){
-		String user= returnUsername();
+
+    @GetMapping
+    public String displayDashboard(Model model) {
+        String user = returnUsername();
         model.addAttribute("userDetails", user);
         return "dashboard";
     }
-	
-	@PostMapping
-	public String filterBusData( @ModelAttribute("reservation") ReservationDTO reservationDTO , Model model) {
-		List<BusData> busData = busDataRepository.findByToFromAndDate(reservationDTO.getTo(), reservationDTO.getFrom(), reservationDTO.getFilterDate());
-		
-		
-		if(busData.isEmpty()) {
-			busData = null;
-		}
-		String user = returnUsername();
+
+    @PostMapping
+    public String filterBusData(@ModelAttribute("reservation") ReservationDTO reservationDTO, Model model) {
+        List<BusData> busData = busDataRepository.findByToFromAndDate(reservationDTO.getTo(), reservationDTO.getFrom(), reservationDTO.getFilterDate());
+
+
+        if (busData.isEmpty()) {
+            busData = null;
+        }
+        String user = returnUsername();
         model.addAttribute("userDetails", user);
-		
-		model.addAttribute("busData",busData);
-		model.addAttribute("reservation", reservationDTO);
-	    return "dashboard";
-	}
-	@GetMapping("/book/{id}")
-	public String bookPage(@PathVariable int id,Model model) {
-		Optional<BusData> busdata = busDataRepository.findById(id);
-		BookingsDTO bks = ObjectCreationHelper.createBookingsDTO(busdata.get());
-		
-		String user = returnUsername();
+
+        model.addAttribute("busData", busData);
+        model.addAttribute("reservation", reservationDTO);
+        return "dashboard";
+    }
+
+    @GetMapping("/book/{id}")
+    public String bookPage(@PathVariable int id, Model model) {
+        Optional<BusData> busdata = busDataRepository.findById(id);
+        BookingsDTO bks = ObjectCreationHelper.createBookingsDTO(busdata.get());
+
+        String user = returnUsername();
         model.addAttribute("userDetails", user);
-         
-		model.addAttribute("record", bks);
-	return "book";	
-	}
-	
-	@PostMapping("/booking")
-	public String finalBooking(@ModelAttribute("record") BookingsDTO bookingDTO,Model model) {
-		SecurityContext securityContext = SecurityContextHolder.getContext();
+
+        model.addAttribute("record", bks);
+        return "book";
+    }
+
+    @PostMapping("/booking")
+    public String finalBooking(@ModelAttribute("record") BookingsDTO bookingDTO, Model model) {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
         UserDetails user = (UserDetails) securityContext.getAuthentication().getPrincipal();
-		Bookings b = userService.updateBookings(bookingDTO,user);
-		model.addAttribute("record", new BookingsDTO());
-		return "redirect:/myBooking";	
-	}
-	
-	private String returnUsername() {
-		SecurityContext securityContext = SecurityContextHolder.getContext();
+        Bookings b = userService.updateBookings(bookingDTO, user);
+        model.addAttribute("record", new BookingsDTO());
+        return "redirect:/myBooking";
+    }
+
+    private String returnUsername() {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
         UserDetails user = (UserDetails) securityContext.getAuthentication().getPrincipal();
-		User users = userRepository.findByEmail(user.getUsername());
-		return users.getName();
-	}
-	
+        User users = userRepository.findByEmail(user.getUsername());
+        return users.getName();
+    }
+
 }
