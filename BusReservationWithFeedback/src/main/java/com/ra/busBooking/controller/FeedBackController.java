@@ -42,8 +42,7 @@ public class FeedBackController {
     }
 
     @PostMapping
-    public String registerUserAccount(@ModelAttribute("feedback")
-                                      FeedBackDTO feedbackDTO) {
+    public String registerUserAccount(@ModelAttribute("feedback") FeedBackDTO feedbackDTO) {
         Map<String, String> map = returnUsername();
         FeedBack feedback = new FeedBack();
         feedback.setComment(feedbackDTO.getComment());
