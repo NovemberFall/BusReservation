@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -130,7 +129,7 @@ public class DefaultUserServiceImpl implements DefaultUserService {
     @Override
     public void sendEmail(BookingsDTO bookingDTO, User users, String nameGenerator) {
         try {
-            final String username = "";//email id of sender
+            final String username = "1219.zheng@gmail.com";//email id of sender
             final String password = "jprbcwjibdketrmj";//application password of Gmail , I dont know how to generate watch this https://bit.ly/3PY4IeS
 
             Properties props = new Properties();
@@ -164,7 +163,7 @@ public class DefaultUserServiceImpl implements DefaultUserService {
             // Now set the actual message
             messageBodyPart.setText("This is message body");
 
-            // Create a multipar message
+            // Create a multipart message
             Multipart multipart = new MimeMultipart();
 
             // Set text message part
@@ -173,7 +172,8 @@ public class DefaultUserServiceImpl implements DefaultUserService {
             // Part two is attachment
             messageBodyPart = new MimeBodyPart();
 
-            String path = "/Users/Git/BusReservation/BusReservationWithFeedback/src/main/resources/tickets";
+//            String path = "/Users/Git/BusReservation/BusReservationWithFeedback/src/main/resources/tickets";
+            String path = "/Volumes/SSD_T/old_BusReservation/BusReservationWithFeedback/src/main/resources/tickets";
             String filename = path + nameGenerator + "";//directory in which pdf is created
             DataSource source = new FileDataSource(filename);
             messageBodyPart.setDataHandler(new DataHandler(source));
@@ -206,7 +206,8 @@ public class DefaultUserServiceImpl implements DefaultUserService {
         context.setVariable("busName", booking.getBusName());
 
         String processHTML = templateEngine.process("template", context);
-        String path = "/Users/Git/BusReservation/BusReservationWithFeedback/src/main/resources/tickets";
+//        String path = "/Users/Git/BusReservation/BusReservationWithFeedback/src/main/resources/tickets";
+        String path = "/Volumes/SSD_T/old_BusReservation/BusReservationWithFeedback/src/main/resources/tickets";
         try {
             OutputStream out = new FileOutputStream(path + nameGenerator + "");//directory in which you have to generate pdf of Ticket
             ITextRenderer ir = new ITextRenderer();
