@@ -196,7 +196,7 @@ public class DefaultUserServiceImpl implements DefaultUserService {
 
     }
 
-    public void createPdf(BookingsDTO booking, User users, String nameGenrator) throws DocumentException, IOException {
+    public void createPdf(BookingsDTO booking, User users, String nameGenerator) throws DocumentException, IOException {
         Context context = new Context();
         context.setVariable("name", users.getName());
         context.setVariable("date", booking.getFilterDate());
@@ -208,7 +208,7 @@ public class DefaultUserServiceImpl implements DefaultUserService {
         String processHTML = templateEngine.process("template", context);
         String path = "/Users/Git/BusReservation/BusReservationWithFeedback/src/main/resources/tickets";
         try {
-            OutputStream out = new FileOutputStream(path + nameGenrator + "");//directory in which you have to generate pdf of Ticket
+            OutputStream out = new FileOutputStream(path + nameGenerator + "");//directory in which you have to generate pdf of Ticket
             ITextRenderer ir = new ITextRenderer();
             ir.setDocumentFromString(processHTML);
             ir.layout();
