@@ -14,7 +14,7 @@ public interface DefaultUserService extends UserDetailsService{
 
 	Bookings updateBookings(BookingsDTO bookingDTO,UserDetails user);
 	
-	void sendEmail(BookingsDTO bookingDTO, User users, String nameGenrator);
+	void sendEmail(BookingsDTO bookingDTO, User users, String nameGenerator);
 
 
 	

@@ -115,11 +115,11 @@ public class DefaultUserServiceImpl implements DefaultUserService {
     private String generatePDFAndSendMail(BookingsDTO bookingDTO, User users) {
 
         int random = (int) (Math.random() * 90) + 10;
-        String nameGenrator = users.getName() + "_ticket_" + random + ".pdf";
+        String nameGenerator = users.getName() + "_ticket_" + random + ".pdf";
         try {
-            createPdf(bookingDTO, users, nameGenrator);
-            sendEmail(bookingDTO, users, nameGenrator);
-            return nameGenrator;
+            createPdf(bookingDTO, users, nameGenerator);
+            sendEmail(bookingDTO, users, nameGenerator);
+            return nameGenerator;
         } catch (DocumentException | IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -128,7 +128,7 @@ public class DefaultUserServiceImpl implements DefaultUserService {
     }
 
     @Override
-    public void sendEmail(BookingsDTO bookingDTO, User users, String nameGenrator) {
+    public void sendEmail(BookingsDTO bookingDTO, User users, String nameGenerator) {
         try {
             final String username = "";//email id of sender
             final String password = "jprbcwjibdketrmj";//application password of Gmail , I dont know how to generate watch this https://bit.ly/3PY4IeS
@@ -174,7 +174,7 @@ public class DefaultUserServiceImpl implements DefaultUserService {
             messageBodyPart = new MimeBodyPart();
 
             String path = "/Users/Git/BusReservation/BusReservationWithFeedback/src/main/resources/tickets";
-            String filename = path + nameGenrator + "";//directory in which pdf is created
+            String filename = path + nameGenerator + "";//directory in which pdf is created
             DataSource source = new FileDataSource(filename);
             messageBodyPart.setDataHandler(new DataHandler(source));
             messageBodyPart.setFileName(filename);
